@@ -1,0 +1,86 @@
+from typing import Dict, Iterator, List, Optional
+
+class Movie:
+    """Класс для представления фильма"""
+    def __init__(self, title: str, year: int, genre: str, rating: float):
+        self.title = title
+        self.year = year
+        self.genre = genre
+        self.rating = rating
+
+    def __str__(self) -> str:
+        return f"{self.title} ({self.year}), {self.genre}, рейтинг: {self.rating}"
+
+class MovieCollection:
+    """Класс для управления коллекцией фильмов"""
+    def __init__(self):
+        self._movies: Dict[str, Movie] = {}
+    
+    def add_movie(self, movie: Movie) -> None:
+        """Добавление фильма в коллекцию"""
+        if movie.title in self._movies:
+            raise ValueError(f"Фильм '{movie.title}' уже существует в коллекции")
+        self._movies[movie.title] = movie
+    
+    def remove_movie(self, title: str) -> None:
+        """Удаление фильма из коллекции"""
+        if title not in self._movies:
+            raise KeyError(f"Фильм '{title}' не найден в коллекции")
+        del self._movies[title]
+    
+    def get_movie(self, title: str) -> Optional[Movie]:
+        """Получение фильма по названию"""
+        return self._movies.get(title)
+    
+    def search_by_genre(self, genre: str) -> List[Movie]:
+        """Поиск фильмов по жанру"""
+        return [movie for movie in self._movies.values() if movie.genre.lower() == genre.lower()]
+    
+    def search_by_year(self, year: int) -> List[Movie]:
+        """Поиск фильмов по году выпуска"""
+        return [movie for movie in self._movies.values() if movie.year == year]
+    
+    def search_by_rating(self, min_rating: float) -> List[Movie]:
+        """Поиск фильмов с рейтингом выше указанного"""
+        return [movie for movie in self._movies.values() if movie.rating >= min_rating]
+    
+    def __iter__(self) -> Iterator[Movie]:
+        """Итератор для перебора коллекции фильмов"""
+        return iter(self._movies.values())
+    
+    def __len__(self) -> int:
+        """Количество фильмов в коллекции"""
+        return len(self._movies)
+    
+    def __contains__(self, title: str) -> bool:
+        """Проверка наличия фильма в коллекции"""
+        return title in self._movies
+
+
+# Пример использования
+if __name__ == "__main__":
+    # Создаем коллекцию
+    collection = MovieCollection()
+    
+    # Добавляем фильмы
+    collection.add_movie(Movie("The Shawshank Redemption", 1994, "Drama", 9.3))
+    collection.add_movie(Movie("The Godfather", 1972, "Crime", 9.2))
+    collection.add_movie(Movie("Pulp Fiction", 1994, "Crime", 8.9))
+    
+    # Выводим все фильмы
+    print("Все фильмы в коллекции:")
+    for movie in collection:
+        print(movie)
+    
+    # Поиск по критериям
+    print("\nКриминальные фильмы:")
+    for movie in collection.search_by_genre("Crime"):
+        print(movie)
+    
+    print("\nФильмы 1994 года:")
+    for movie in collection.search_by_year(1994):
+        print(movie)
+    
+    # Удаление фильма
+    collection.remove_movie("Pulp Fiction")
+    print(f"\nПосле удаления осталось {len(collection)} фильма")
