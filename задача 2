@@ -1,0 +1,26 @@
+npx playwright test # Запуск всех тестов
+npx playwright show-report # Просмотр отчёта
+
+// Конфигурация 
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  projects: [
+    {
+      name: 'Chromium',
+      use: { browserName: 'chromium' }, // Встроенный Chromium
+    },
+    {
+      name: 'Firefox',
+      use: { browserName: 'firefox' },  // Встроенный Firefox
+    },
+  ],
+});
+
+//Тест  
+import { test, expect } from '@playwright/test';
+
+test('Page title should be correct', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
+  await expect(page).toHaveTitle(/Playwright/); // Регулярное выражение для частичного совпадения
+});
